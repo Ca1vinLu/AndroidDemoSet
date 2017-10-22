@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/MyAndroidFrame/MyAndroidFrame.iml" filepath="$PROJECT_DIR$/MyAndroidFrame/MyAndroidFrame.iml" />
       <module fileurl="file://$PROJECT_DIR$/PresentationDemo/PresentationDemo.iml" filepath="$PROJECT_DIR$/PresentationDemo/PresentationDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/PrinterHelper/PrinterHelper.iml" filepath="$PROJECT_DIR$/PrinterHelper/PrinterHelper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gjy/gjy.iml" filepath="$PROJECT_DIR$/gjy/gjy.iml" />
     </modules>
   </component>
 </project>
