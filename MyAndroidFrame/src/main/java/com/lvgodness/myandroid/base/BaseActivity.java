@@ -9,8 +9,10 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.LogUtils;
 import com.lzy.okgo.OkGo;
 
+import butterknife.ButterKnife;
+
 /**
- * Created by HF on 2017/7/23.
+ * Created by LYZ on 2017/7/23.
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -25,6 +27,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         LogUtils.d(TAG, "onCreate");
         mActivity = this;
+        ButterKnife.bind(this);
         initView();
         initData();
         initListener();
@@ -85,5 +88,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startActivity(Class<?> cls) {
         Intent intent = new Intent(mActivity, cls);
         startActivity(intent);
+    }
+
+    public void startActivityForResult(Class<?> cls, int requestCode) {
+        Intent intent = new Intent(mActivity, cls);
+        startActivityForResult(intent, requestCode);
     }
 }
