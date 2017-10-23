@@ -1,1 +1,1 @@
-include ':MyAndroidFrame', ':PrinterHelper', ':PresentationDemo', ':gjy'
+include ':PrinterHelper', ':PresentationDemo', ':gjy'
