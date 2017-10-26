@@ -1,1 +1,1 @@
-include ':PrinterHelper', ':PresentationDemo', ':gjy'
+include ':PrinterHelper', ':PresentationDemo', ':gjy', ':CustomizeViewDemo'
