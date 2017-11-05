@@ -2,10 +2,9 @@ package com.lvgodness.printerhelper;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.print.PrintHelper;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +15,7 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +38,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void printPhoto() {
-        PrintHelper photoPrinter = new PrintHelper(this);
-        photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
-//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-//                R.drawable.droids);
-        Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
-        photoPrinter.printBitmap("droids.jpg - test print", bitmap);
+//        PrintHelper photoPrinter = new PrintHelper(this);
+//        photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+////        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+////                R.drawable.droids);
+//        Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
+//        photoPrinter.printBitmap("droids.jpg - test print", bitmap);
+
+        String epsonPrintApkPackageName = "epson.print";
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.SEND");
+        intent.setPackage(epsonPrintApkPackageName);
+        intent.setClassName(epsonPrintApkPackageName, "epson.print.ActivityDocsPrintPreview");
+
+        Uri photoOutputUri = FileProvider.getUriForFile(
+                this,
+                getPackageName() + ".fileprovider",
+                new File(mSelected.get(0)));
+
+        intent.putExtra("android.intent.extra.STREAM", photoOutputUri);
+        intent.setType("image/jpeg");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        getBaseContext().startActivity(intent);
     }
 
     private void choosePhoto() {
