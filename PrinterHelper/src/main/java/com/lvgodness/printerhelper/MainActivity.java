@@ -1,29 +1,42 @@
 package com.lvgodness.printerhelper;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
+import android.print.PrintAttributes;
+import android.print.PrintManager;
+import android.support.v4.print.PrintHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+    private static final String TAG = "MainActivity";
     private List<String> mSelected = new ArrayList<>();
     private Button choosePhoto;
     private Button printPhoto;
+    private PrintHelper photoPrinter;
+    private Context mActivity;
+
+    private PrintAttributes attributes = new PrintAttributes.Builder()
+            .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
+            .setMediaSize(PrintAttributes.MediaSize.ISO_A4.asLandscape())
+            .build();
 
 
     @Override
@@ -35,32 +48,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         choosePhoto.setOnClickListener(this);
         printPhoto.setOnClickListener(this);
+        photoPrinter = new PrintHelper(this);
+        photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+        mActivity = this;
     }
 
     private void printPhoto() {
-//        PrintHelper photoPrinter = new PrintHelper(this);
-//        photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
-////        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-////                R.drawable.droids);
-//        Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
-//        photoPrinter.printBitmap("droids.jpg - test print", bitmap);
+        if (mSelected.size() > 0) {
+//            for (int i = 0; i < 4; i++) {
+//                photoPrinter.printBitmap("androids_test_print", bitmap);
+//            }
 
-        String epsonPrintApkPackageName = "epson.print";
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.SEND");
-        intent.setPackage(epsonPrintApkPackageName);
-        intent.setClassName(epsonPrintApkPackageName, "epson.print.ActivityDocsPrintPreview");
 
-        Uri photoOutputUri = FileProvider.getUriForFile(
-                this,
-                getPackageName() + ".fileprovider",
-                new File(mSelected.get(0)));
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
+                bitmap = Glide.with(mActivity)
+                        .load("http://luyiapp-img.heiyou.net/ProductDetial/2017-11-02/1509613022_442347.jpg")
+                        .asBitmap()
+                        //                    .override(819, 580)
+                        .into(-1, -1)
+                        .get();
+                FutureTarget
 
-        intent.putExtra("android.intent.extra.STREAM", photoOutputUri);
-        intent.setType("image/jpeg");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        getBaseContext().startActivity(intent);
+                List<Bitmap> data = new ArrayList<>();
+                data.add(bitmap);
+                data.add(bitmap);
+                data.add(bitmap);
+                data.add(bitmap);
+                doPrint(data);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+
+//            List<Bitmap> data = new ArrayList<>();
+//            data.add(bitmap);
+//            data.add(bitmap);
+//            data.add(bitmap);
+//            data.add(bitmap);
+//            doPrint(data);
+        }
+
+//        String epsonPrintApkPackageName = "epson.print";
+//        Intent intent = new Intent();
+//        intent.setAction("android.intent.action.SEND");
+//        intent.setPackage(epsonPrintApkPackageName);
+//        intent.setClassName(epsonPrintApkPackageName, "epson.print.ActivityDocsPrintPreview");
+//
+//        Uri photoOutputUri = FileProvider.getUriForFile(
+//                this,
+//                getPackageName() + ".fileprovider",
+//                new File(mSelected.get(0)));
+//
+//        intent.putExtra("android.intent.extra.STREAM", photoOutputUri);
+//        intent.setType("image/jpeg");
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//        getBaseContext().startActivity(intent);
     }
 
     private void choosePhoto() {
@@ -101,6 +147,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.printPhoto:
                 printPhoto();
                 break;
+        }
+    }
+
+    private void doPrint(List<Bitmap> data) {
+        // Get a PrintManager instance
+        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+
+        // Set job name, which will be displayed in the print queue
+        String jobName = getString(R.string.app_name) + " Document";
+
+        // Start a print job, passing in a PrintDocumentAdapter implementation
+        // to handle the generation of a print document
+        if (printManager != null) {
+            printManager.print(jobName, new MyPrintDocumentAdapter(this, data),
+                    attributes); //
         }
     }
 }
