@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
@@ -16,14 +17,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -60,27 +61,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            }
 
 
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
-                bitmap = Glide.with(mActivity)
-                        .load("http://luyiapp-img.heiyou.net/ProductDetial/2017-11-02/1509613022_442347.jpg")
-                        .asBitmap()
-                        //                    .override(819, 580)
-                        .into(-1, -1)
-                        .get();
-                FutureTarget
+//            try {
+            Bitmap bitmap = BitmapFactory.decodeFile(mSelected.get(0));
+//                bitmap = Glide.with(getApplicationContext())
+//                        .load("http://luyiapp-img.heiyou.net/ProductDetial/2017-11-02/1509613022_442347.jpg")
+//                        .asBitmap()
+//                        //                    .override(819, 580)
+//                        .into(100, 100)
+//                        .get();
 
-                List<Bitmap> data = new ArrayList<>();
-                data.add(bitmap);
-                data.add(bitmap);
-                data.add(bitmap);
-                data.add(bitmap);
-                doPrint(data);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            Glide.with(getApplicationContext())
+                    .load("http://luyiapp-img.heiyou.net/ProductDetial/2017-11-02/1509613022_442347.jpg")
+                    .asBitmap()
+                    .override(819, 580)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            super.onLoadFailed(e, errorDrawable);
+                            Log.d(TAG, "onLoadFailed: ");
+                        }
+
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            Log.d(TAG, "onResourceReady: ");
+                            List<Bitmap> data = new ArrayList<>();
+                            data.add(resource);
+                            data.add(resource);
+                            data.add(resource);
+                            data.add(resource);
+                            doPrint(data);
+                        }
+                    });
+
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
 
 
 //            List<Bitmap> data = new ArrayList<>();
