@@ -3,4 +3,5 @@ include ':PrinterHelper',
         ':gjy',
         ':CustomizeViewDemo',
         ':EventBusDemo',
-        ':QRCodeReaderDemo'
+        ':QRCodeReaderDemo',
+        ':CompareView'
