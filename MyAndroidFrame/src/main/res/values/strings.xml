@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">MyAndroid</string>
-
-    <string name="LinearLayoutManager">LinearLayoutManager</string>
-    <string name="GridLayoutManager">GridLayoutManager</string>
-    <string name="StaggeredGridLayoutManager">StaggeredGridLayoutManager</string>
-</resources>
